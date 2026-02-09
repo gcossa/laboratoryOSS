@@ -1,4 +1,4 @@
-# 🧪 Laboratorio ETL – Pinot + Kafka
+# Laboratorio ETL – Pinot + Kafka
 
 Este laboratorio permite probar un flujo **end‑to‑end de ingestión y consulta de datos** utilizando Docker, Kafka y Apache Pinot.
 
