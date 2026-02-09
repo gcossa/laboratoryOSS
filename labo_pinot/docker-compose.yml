@@ -50,9 +50,10 @@ services:
     depends_on:
       - kafka
     ports:
-      - "8000:8000"
+      - "8000:8000" # Exponer el puerto del productor si es necesario para la API
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      PRODUCER_TYPE: "random" # Cambiar por 'random' o 'api' dependiendo del tipo de productor que quieras usar
 
   superset:
     build: ./superset
