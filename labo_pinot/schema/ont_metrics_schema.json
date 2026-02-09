@@ -1,0 +1,31 @@
+{
+  "schemaName": "ont_metrics", 
+  "dimensionFieldSpecs": [
+    {
+      "name": "host",
+      "dataType": "STRING"
+    }
+  ],
+  "metricFieldSpecs": [
+    {
+      "name": "cpu",
+      "dataType": "FLOAT"
+    },
+    {
+      "name": "traffic_in",
+      "dataType": "FLOAT"
+    },
+    {
+      "name": "traffic_out",
+      "dataType": "FLOAT"
+    }
+  ],
+  "dateTimeFieldSpecs": [
+    {
+      "name": "ts",
+      "dataType": "LONG",
+      "format": "1:MILLISECONDS:EPOCH",
+      "granularity": "1:MILLISECONDS"
+    }
+  ]
+}

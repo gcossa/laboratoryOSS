@@ -1,0 +1,73 @@
+services:
+  zookeeper:
+    image: zookeeper:3.7
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  pinot-controller:
+    image: apachepinot/pinot:1.1.0
+    container_name: pinot-controller
+    command: StartController -zkAddress zookeeper:2181 -clusterName PinotCluster
+    ports:
+      - "9000:9000"
+    depends_on:
+      - zookeeper
+
+  pinot-broker:
+    image: apachepinot/pinot:1.1.0
+    container_name: pinot-broker
+    command: StartBroker -zkAddress zookeeper:2181 -clusterName PinotCluster
+    ports:
+      - "8099:8099"
+    depends_on:
+      - pinot-controller
+
+  pinot-server:
+    image: apachepinot/pinot:1.1.0
+    container_name: pinot-server
+    command: StartServer -zkAddress zookeeper:2181 -clusterName PinotCluster
+    depends_on:
+      - pinot-controller
+  
+  producer:
+    build: ./python-app
+    container_name: producer
+    depends_on:
+      - kafka
+    ports:
+      - "8000:8000"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  superset:
+    build: ./superset
+    container_name: superset
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_SECRET_KEY: thisISaSECRET_1234
+      SUPERSET_CONFIG_PATH: /app/superset_config.py
+    command: >
+      /bin/sh -c "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@superset.com --password admin &&
+      superset init &&
+      superset run -p 8088 -h 0.0.0.0
+      "
+    volumes:
+      - ./superset/superset_config.py:/app/superset_config.py

@@ -1,0 +1,7 @@
+FEATURE_FLAGS = {
+    "DYNAMIC_DB_FORMS": True,
+}
+
+DB_CONNECTION_ALLOWLIST = {
+    "pinot",
+}

@@ -1,0 +1,13 @@
+FROM apache/superset:2.1.0
+
+USER root
+
+# Dependencias necesarias para python-geohash
+RUN apt-get update && \
+    apt-get install -y g++ build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
+# Pinot + SQLAlchemy compatible
+RUN pip install --no-cache-dir pinotdb
+
+USER superset

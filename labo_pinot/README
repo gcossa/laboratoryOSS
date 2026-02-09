@@ -1,0 +1,30 @@
+Levantar Pinot:
+
+1. Ejecutar docker compose 
+
+2. Levantar a mano los contenedores que hayan quedado caidos (AUTOMATIZAR)
+
+3. Crear schema:
+Invoke-WebRequest `
+-Method POST `
+-Uri http://localhost:9000/schemas `
+-Headers @{ "Content-Type" = "application/json" }
+-Body (Get-Content ./schema/ont_metrics_schema.json -Raw) 
+
+4. Crear tabla, hacer un POST del JSON ont_metrics_REALTIME.json
+Invoke-WebRequest `
+-Method POST `
+-Uri http://localhost:9000/tables `
+-Headers @{ "Content-Type" = "application/json" } `
+-InFile ./table/ont_metrics_realtime.json `
+-UseBasicParsing   
+
+5. Hacer un POST al producer con un payload similar a:
+    {
+         "host": "ONT3_PRUEBA",
+         "cpu": 90.0,
+         "traffic_in": 150.0,
+         "traffic_out": 150.0
+    }
+6. Probar query desde Pinot, si toda va bien deberia ver datos SQL: “SELECT * FROM ont_metrics”
+
